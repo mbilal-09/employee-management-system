@@ -1,5 +1,7 @@
 // pages/api/auth/[...nextauth].js
 
+import User from '@/models/employee';
+import connectToDB from '@/utils/database';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
@@ -11,7 +13,7 @@ const handler = NextAuth({
       name: 'Credentials',
       credentials: {
         // Username and password fields
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
@@ -19,12 +21,14 @@ const handler = NextAuth({
 
         const { username, password } = credentials;
 
-        if (username === 'bilal@gmail.com' && password === 'password') {
+        connectToDB();
+
+        if (email === '123@gmail.com' && password === '123') {
           // If credentials are valid, return the user object
 
-          console.log('username---->' + username, password);
+          console.log('username---->' + email, password);
 
-          return { email: username };
+          return { email: email };
 
         } else {
           return false
@@ -44,7 +48,8 @@ const handler = NextAuth({
       // const sessionUser = await User.findOne({
       //   email: session.user.email,
       // });
-      // session.user.id = sessionUser._id.toString();
+      // sessionUser?.password = undefined;
+      // session.user = sessionUser;
 
       return session;
   }}

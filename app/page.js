@@ -4,9 +4,9 @@ import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Home() {
-  const data = useSession()
+  // const data = useSession()
 
-  console.log('data--> ', data);
+  // console.log('data--> ', data);
   return (
     <>
     <button onClick={() => signIn()}>SignIn</button>
