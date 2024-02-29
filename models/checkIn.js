@@ -5,7 +5,7 @@ import { Schema, model, models } from "mongoose";
 const CheckInSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'users',// Reference to the User model
     required: [true, "User ID is required!"],
   },
   month: {

@@ -1,22 +1,24 @@
 "use client";
 
+import Navbar from "@/components/layout/Navbar";
 import Button from "@/components/ui/Button";
+import Loader from "@/components/ui/Loader";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const checkIn = () => {
-  const data = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    if (data.status === "unauthenticated") {
+    if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [data, router]);
+  }, [session, router]);
 
-  const id = data?.data?.data?._id;
+  const id = session?.data?._id;
 
   const handleSubmit = async () => {
     try {
@@ -24,7 +26,10 @@ const checkIn = () => {
       const lastCheckInDate = localStorage.getItem("lastCheckInDate");
 
       // Check if lastCheckInDate exists and if it's the same day
-      if (!lastCheckInDate || new Date(lastCheckInDate).getDate() !== new Date().getDate()) {
+      if (
+        !lastCheckInDate ||
+        new Date(lastCheckInDate).getDate() !== new Date().getDate()
+      ) {
         // Make the fetch request
         const response = await fetch(`/api/checkIn/${id}`, {
           method: "POST",
@@ -52,12 +57,24 @@ const checkIn = () => {
 
   const handleSignOut = () => {
     signOut();
-  }
+  };
 
   return (
-    <div className="flex justify-around items-center h-screen">
-      <Button handleOnClick={handleSubmit} disabled={disabled}>Check In</Button>
-      <Button handleOnClick={handleSignOut}>Sign Out</Button>
+    <div className="">
+      {session?.data?.type === "employee" ? (
+        <div>
+        <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
+        <div className="ps-3">
+          <Button handleOnClick={handleSubmit} disabled={disabled}>
+            Check In
+          </Button>
+        </div>
+        </div>
+      ) : session?.data?.type === "admin" ? (
+        router.push("/dashboard")
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };

@@ -5,35 +5,38 @@ import connectToDB from "@/utils/database";
 import bcrypt from "bcrypt";
 
 export const POST = async (req) => {
-    try {
-        connectToDB();
+  try {
+    connectToDB();
 
-        const { name, email, password, shift } = await req.json();
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({
-          name,
-          email,
-          password: hashedPassword,
-          shift,
-        });
-        return new Response({ status: 201, data: user})
-    } catch (error) {
-          return new Response({ status: 400, success: false, error: error.message })
-      }
-}
+    const { name, email, password, shift } = await req.json();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      shift,
+    });
+    return new Response({ status: 201, data: user });
+  } catch (error) {
+    return new Response({ status: 400, success: false, error: error.message });
+  }
+};
 
 export const GET = async (req) => {
   try {
     connectToDB();
 
-    const users = await User.find({ type: "employee" });
+    const searchParams = req.nextUrl.searchParams;
+    const type = searchParams.get("type");
 
-    return new Response(JSON.stringify(users))
+    const users = await User.find({ shift: type });
 
+    return new Response(JSON.stringify(users), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
-    return new Response({ status: 400, success: false, error: error.message })
+    return new Response(JSON.stringify({ status: 400, success: false, error: error.message }), { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
-}
+};
+
 
 // export const PUT = async (req, { params }) => {
 //     try {

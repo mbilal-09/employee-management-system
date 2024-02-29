@@ -44,12 +44,16 @@ const handler = NextAuth({
   ],
   // Add session handling callback functions
   callbacks: {
+    async jwt({ token, user, account, profile, isNewUser }) {
+      token.exp = 864000000000;
+      return token;
+    },
+
     async signIn(user, account, profile) {
       // Custom sign-in logic if needed
       return true;
     },
     async session({ session }) {
-      
       connectToDB();
 
       const sessionUser = await User.findOne({
@@ -57,6 +61,8 @@ const handler = NextAuth({
       });
       sessionUser.password = null;
       session.data = sessionUser;
+
+      session.expires = 864000000000;
 
       return session;
     },
