@@ -59,6 +59,19 @@ const Employee = () => {
     }
   }, [status, router]);
 
+  useEffect(() => {
+    // Set the body overflow style when the modal is open
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    // Clean up the style when the component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isModalOpen]);
+
   return (
     <>
     {session?.data?.type === "admin" ? (
@@ -68,7 +81,7 @@ const Employee = () => {
         <Dropdown onChange={handleDropdownChange} />
         <br />
         {isLoading ? (
-          "Loading..."
+          <Loader />
         ) : (
           <UserList users={users} onDelete={handleDeleteUser} />
         )}

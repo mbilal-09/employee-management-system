@@ -15,6 +15,7 @@ const UserList = ({ users, onDelete }) => {
             <th className="py-2 px-4">Name</th>
             <th className="py-2 px-4">Email</th>
             <th className="py-2 px-4">Shift</th>
+            <th className="py-2 px-4">Type</th>
             <th className="py-2 px-4">Actions</th>
           </tr>
         </thead>
@@ -24,6 +25,7 @@ const UserList = ({ users, onDelete }) => {
               <td className="py-2 px-4">{user.name}</td>
               <td className="py-2 px-4">{user.email}</td>
               <td className="py-2 px-4">{user.shift}</td>
+              <td className="py-2 px-4">{user.type}</td>
               <td className="py-2 px-4">
                 <button className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" onClick={() => handleDelete(user._id)}>Delete</button>
               </td>

@@ -21,6 +21,8 @@ const checkIn = () => {
   const id = session?.data?._id;
 
   const handleSubmit = async () => {
+
+    setDisabled(true);
     try {
       // Get the last check-in date from localStorage
       const lastCheckInDate = localStorage.getItem("lastCheckInDate");
@@ -40,9 +42,6 @@ const checkIn = () => {
 
         // Update the last check-in date in localStorage
         localStorage.setItem("lastCheckInDate", new Date().toISOString());
-
-        // Disable the button
-        setDisabled(true);
 
         // Log the response data
         alert("Check-in Added");

@@ -10,10 +10,11 @@ import React, { useEffect, useState } from "react";
 const Dashboard = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [shift, setShift] = useState("");
+  const [shift, setShift] = useState("morning");
   const [month, setMonth] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dates, setDates] = useState([]);
 
   useEffect(() => {
     if (status === "unauthenticated" || session?.data?.type === "employee") {
@@ -29,31 +30,13 @@ const Dashboard = () => {
     signOut();
   };
 
-  const handleShowResult = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `/api/checkIn?shift=${shift}&month=${month}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      const data = await response.json();
-      setResult(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleMonthChange = (e) => {
     const capitalizedMonth =
       e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
     setMonth(capitalizedMonth);
   };
 
-  function getDatesForMonth(monthName) {
+  const getDatesForMonth = (monthName) => {
     // Create a date object with the first day of the given month
     const startDate = new Date(`1 ${monthName}`);
 
@@ -61,7 +44,7 @@ const Dashboard = () => {
     const month = startDate.getMonth();
 
     // Initialize an empty array to store the dates
-    const dates = [];
+    const monthDates = [];
 
     // Loop through each day of the month
     while (startDate.getMonth() === month) {
@@ -72,18 +55,46 @@ const Dashboard = () => {
       )}/${String(month + 1).padStart(2, "0")}`;
 
       // Push the formatted date to the array
-      dates.push(formattedDate);
+      monthDates.push(formattedDate);
 
       // Move to the next day
       startDate.setDate(startDate.getDate() + 1);
     }
 
-    return dates;
-  }
+    setDates(monthDates);
+  };
 
-  const monthName = "January";
-  const dates = getDatesForMonth(monthName);
-  console.log(dates);
+  const handleShowResult = async () => {
+    setLoading(true);
+    getDatesForMonth(month);
+    try {
+      const response = await fetch(
+        `/api/checkIn?shift=${shift}&month=${month}`, { cache: "no-store" }
+      );
+      console.log(response);
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      setResult(data);
+      console.log("result ->", result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGetCheckInTime = (user, date) => {
+    result.map((element) => {
+      if (element.userId.email === user.userId.email && element.date === date) {
+        console.log(element.time);
+        return element.time;
+      } else {
+        return "-";
+      }
+    });
+  };
 
   return (
     <div>
@@ -124,38 +135,51 @@ const Dashboard = () => {
             </div>
           </div>
           {result && (
-            <table className="border-collapse border border-gray-800">
-              <thead>
-                <tr>
-                  <th className="border border-gray-800">User</th>
-                  {result.map((entry) => (
-                    <th key={entry.date} className="border border-gray-800">
-                      {entry.date.includes(month) ? entry.date : ""}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {result[0].userId &&
-                  result.map((user) => (
-                    <tr key={user.userId._id}>
-                      <td className="border border-gray-800">
-                        {user.userId.name}
-                      </td>
-                      {result.map((entry) => (
-                        <td
-                          key={`${user.userId._id}-${entry.date}`}
-                          className="border border-gray-800"
-                        >
-                          {entry.userId &&
-                            entry.userId.name === user.userId.name &&
-                            entry.time}
+            <div className="overflow-x-auto">
+              <table className="border-collapse border border-gray-300 p-2 overflow-x-scroll">
+                <thead>
+                  <tr>
+                    <th className="border border-gray-300 p-2 px-10">Users</th>
+                    {dates.map((date) => (
+                      <th key={date} className="border border-gray-300 p-2 px-10">
+                        {date}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {result &&
+                    result.map((user) => (
+                      <tr key={user._id}>
+                        <td className="border border-gray-300 ps-2">
+                          {user.userId.name}
                         </td>
-                      ))}
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+                        {dates.map((entry) => (
+                          <td
+                            key={`${user.userId._id}-${entry}`}
+                            className="border border-gray-300 text-white p-2 text-center"
+                          >
+                            {result
+                              .map((element) => {
+                                if (
+                                  element.userId.email === user.userId.email &&
+                                  element.date === entry
+                                ) {
+                                  return element.time; // Return only the time if condition is met
+                                } else {
+                                  return null; // Return null for entries where condition is not met
+                                }
+                              })
+                              .filter((time) => time !== null) // Filter out null values
+                              .join(", ") || "-"}{" "}
+                            {/* Join multiple times with comma or show "-" if no times */}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       ) : (

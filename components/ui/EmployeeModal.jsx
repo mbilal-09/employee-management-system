@@ -11,11 +11,6 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
   });
 
   useEffect(() => {
-    // Set the app element when the component mounts
-    Modal.setAppElement('#employeeModal');
-  }, []);
-
-  useEffect(() => {
     // Reset form data when modal is opened
     if (isOpen) {
       setFormData({
@@ -63,20 +58,13 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
     }
   };
 
-  const customStyles = {
-    content: {
-      transform: 'translate(0%, -25%)',
-    },
-  };
-
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
       contentLabel="Add Employee"
-      className="modal bg-black border border-white rounded-lg p-4 m-4"
+      className="modal bg-black border border-white rounded-lg p-4 m-4 w-1/2 mx-auto fixed top-10 left-1/4"
       overlayClassName="overlay"
-      style={customStyles}
     >
       <h2 className="ps-4 font-semibold">Add Employee</h2>
       <form className="p-4" onSubmit={handleSubmit}>
