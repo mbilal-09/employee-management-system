@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <Button handleOnClick={signIn}>Sign In</Button>
+      <Button handleOnClick={signIn} styles="px-20 py-3 text-xl">Sign In</Button>
     </div>
   );
 }

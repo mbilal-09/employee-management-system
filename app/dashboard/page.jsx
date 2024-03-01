@@ -6,6 +6,7 @@ import Loader from "@/components/ui/Loader";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
 
 const Dashboard = () => {
   const router = useRouter();
@@ -27,7 +28,23 @@ const Dashboard = () => {
   };
 
   const handleSignOut = () => {
-    signOut();
+    Swal.fire({
+      title: "Sign Out!",
+      text: "Are you sure!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Sign Out!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Sign Out!",
+          icon: "success"
+        });
+        signOut();
+      }
+    }); 
   };
 
   const handleMonthChange = (e) => {
@@ -69,15 +86,14 @@ const Dashboard = () => {
     getDatesForMonth(month);
     try {
       const response = await fetch(
-        `/api/checkIn?shift=${shift}&month=${month}`, { cache: "no-store" }
+        `/api/checkIn?shift=${shift}&month=${month}`,
+        { cache: "no-store" }
       );
-      console.log(response);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
       setResult(data);
-      console.log("result ->", result);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -85,30 +101,31 @@ const Dashboard = () => {
     }
   };
 
-  const handleGetCheckInTime = (user, date) => {
-    result.map((element) => {
-      if (element.userId.email === user.userId.email && element.date === date) {
-        console.log(element.time);
-        return element.time;
-      } else {
-        return "-";
-      }
-    });
+  const isDateBeforeToday = (dateString) => {
+    const today = new Date();
+    const [day, month] = dateString.split("/").map(Number);
+    const currentMonth = today.getMonth() + 1; // JavaScript months are zero-based
+    const currentDay = today.getDate();
+    
+    // If the month is less than the current month, or if it's the current month but the day is less than the current day
+    return month < currentMonth || (month === currentMonth && day < currentDay);
   };
 
   return (
-    <div>
+    <div className="h-screen">
       {session?.data?.type === "admin" ? (
         <div>
           <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
           <div className="p-3 flex justify-between">
-            <div className="flex gap-4 mb-4 items-center">
+            <div className="flex gap-4 mb-4 items-center text-white">
               <div>
-                <label htmlFor="shift">Shift:</label>
+                <label htmlFor="shift" className="font-semibold">
+                  Shift:
+                </label>
                 <select
                   id="shift"
                   value={shift}
-                  className="text-black p-2 rounded-lg ms-2"
+                  className="text-black p-2 rounded-lg ms-2 py-[10px] "
                   onChange={(e) => setShift(e.target.value)}
                 >
                   <option value="morning">Morning</option>
@@ -117,11 +134,13 @@ const Dashboard = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="month">Month:</label>
+                <label htmlFor="month" className="font-semibold">
+                  Month:
+                </label>
                 <input
                   type="text"
                   id="month"
-                  className="text-black p-2 rounded-lg ms-2"
+                  className="text-black p-2 rounded-lg ms-2 py-[10px]"
                   value={month}
                   onChange={handleMonthChange}
                 />
@@ -135,55 +154,56 @@ const Dashboard = () => {
             </div>
           </div>
           {result && (
-            <div className="overflow-x-auto">
-              <table className="border-collapse border border-gray-300 p-2 overflow-x-scroll">
+            <div className="overflow-x-auto text-white p-2">
+              <table className="border-collapse border border-gray-100 p-2 overflow-x-scroll">
                 <thead>
                   <tr>
-                    <th className="border border-gray-300 p-2 px-10">Users</th>
+                    <th className="border border-gray-100 p-2 px-10">Users</th>
                     {dates.map((date) => (
-                      <th key={date} className="border border-gray-300 p-2 px-10">
+                      <th
+                        key={date}
+                        className="border border-gray-100 p-2 px-10"
+                      >
                         {date}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {result &&
-                    result.map((user) => (
-                      <tr key={user._id}>
-                        <td className="border border-gray-300 ps-2">
-                          {user.userId.name}
+                  {Object.values(
+                    result.reduce((acc, cur) => {
+                      const key = cur.userId._id; // Use user ID as the key
+                      if (!acc[key]) {
+                        acc[key] = { user: cur.userId.name, checkIns: {} };
+                      }
+                      // Store check-ins by date for each user
+                      acc[key].checkIns[cur.date] = cur.time;
+                      return acc;
+                    }, {})
+                  ).map((userData) => (
+                    <tr key={userData.user}>
+                      <td className="border border-gray-100 ps-2 capitalize">
+                        {userData.user}
+                      </td>
+                      {dates.map((date) => (
+                        <td
+                          key={`${userData.user}-${date}`}
+                          className="border border-gray-100 p-2 text-center"
+                        >
+                          {userData.checkIns[date] ? userData.checkIns[date] : isDateBeforeToday(date) ? "Absent" : "-"}
                         </td>
-                        {dates.map((entry) => (
-                          <td
-                            key={`${user.userId._id}-${entry}`}
-                            className="border border-gray-300 text-white p-2 text-center"
-                          >
-                            {result
-                              .map((element) => {
-                                if (
-                                  element.userId.email === user.userId.email &&
-                                  element.date === entry
-                                ) {
-                                  return element.time; // Return only the time if condition is met
-                                } else {
-                                  return null; // Return null for entries where condition is not met
-                                }
-                              })
-                              .filter((time) => time !== null) // Filter out null values
-                              .join(", ") || "-"}{" "}
-                            {/* Join multiple times with comma or show "-" if no times */}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
+                      ))}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           )}
         </div>
       ) : (
+        <div className="flex justify-center items-center h-screen">
         <Loader />
+        </div>
       )}
     </div>
   );

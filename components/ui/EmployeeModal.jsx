@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import Button from "./Button";
+import Swal from 'sweetalert2'
 
 const EmployeeModal = ({ isOpen, closeModal }) => {
   const [formData, setFormData] = useState({
@@ -34,7 +35,12 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
     e.preventDefault();
     // Check if any field is empty
     if (!formData.name || !formData.email || !formData.password) {
-      alert("Please fill in all fields.");
+      Swal.fire({
+        title: 'Warning!',
+        text: 'Please fill al the fields first',
+        icon: 'warning',
+        confirmButtonText: 'Ok'
+      })
       return;
     }
     try {
@@ -46,7 +52,12 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        alert("Employee added successfully!");
+        Swal.fire({
+          title: 'Success!',
+          text: 'Employee added successfully!',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        })
         closeModal();
       } else {
         const data = await response.json();
@@ -63,7 +74,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
       isOpen={isOpen}
       onRequestClose={closeModal}
       contentLabel="Add Employee"
-      className="modal bg-black border border-white rounded-lg p-4 m-4 w-1/2 mx-auto fixed top-10 left-1/4"
+      className="modal bg-gradient-to-t from-[--primary] to-[--secondary] border-2 text-white border-white rounded-lg p-4 m-4 w-1/2 mx-auto fixed top-10 left-1/4"
       overlayClassName="overlay"
     >
       <h2 className="ps-4 font-semibold">Add Employee</h2>
@@ -78,7 +89,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-2 border rounded text-black"
+            className="w-full p-2 border border-black rounded text-black"
           />
         </div>
         <div className="mb-4">
@@ -91,7 +102,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-2 border rounded text-black"
+            className="w-full p-2 border rounded border-black text-black"
           />
         </div>
         <div className="mb-4">
@@ -104,7 +115,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-2 border rounded text-black"
+            className="w-full p-2 border rounded border-black text-black"
           />
         </div>
         <div className="mb-4">
@@ -120,7 +131,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="morning" className="text-white">
+              <label htmlFor="morning">
                 Morning
               </label>
             </div>
@@ -134,7 +145,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="evening" className="text-white">
+              <label htmlFor="evening">
                 Evening
               </label>
             </div>
@@ -148,7 +159,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="night" className="text-white">
+              <label htmlFor="night">
                 Night
               </label>
             </div>
@@ -158,7 +169,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
           <Button handleOnClick={closeModal}>Cancel</Button>
           <button
             type="submit"
-            className="bg-white text-black py-2 px-4 rounded-lg font-medium"
+            className="bg-white text-[--primary] border-2 py-2 px-4 rounded-lg font-medium hover:bg-transparent hover:text-white transition-all delay-75 duration-700"
           >
             Add
           </button>

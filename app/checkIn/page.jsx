@@ -3,9 +3,11 @@
 import Navbar from "@/components/layout/Navbar";
 import Button from "@/components/ui/Button";
 import Loader from "@/components/ui/Loader";
+import SweetAlert from "@/components/ui/SweetAlert";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
 
 const checkIn = () => {
   const { data: session, status } = useSession();
@@ -21,7 +23,6 @@ const checkIn = () => {
   const id = session?.data?._id;
 
   const handleSubmit = async () => {
-
     setDisabled(true);
     try {
       // Get the last check-in date from localStorage
@@ -43,11 +44,20 @@ const checkIn = () => {
         // Update the last check-in date in localStorage
         localStorage.setItem("lastCheckInDate", new Date().toISOString());
 
-        // Log the response data
-        alert("Check-in Added");
+        Swal.fire({
+          title: 'Success!',
+          text: 'Check In Added',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        })
+        
       } else {
-        // If already checked in today, display a message or handle it accordingly
-        alert("Already checked in today");
+        Swal.fire({
+          title: 'Warning!',
+          text: 'Already Checked In Today',
+          icon: 'warning',
+          confirmButtonText: 'Ok'
+        })
       }
     } catch (error) {
       console.error("Error:", error);
@@ -55,24 +65,48 @@ const checkIn = () => {
   };
 
   const handleSignOut = () => {
-    signOut();
+    Swal.fire({
+      title: "Sign Out!",
+      text: "Are you sure!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Sign Out!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Sign Out!",
+          icon: "success"
+        });
+        signOut();
+      }
+    }); 
   };
 
   return (
-    <div className="">
+    <div className="h-screen">
       {session?.data?.type === "employee" ? (
-        <div>
-        <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
-        <div className="ps-3">
-          <Button handleOnClick={handleSubmit} disabled={disabled}>
-            Check In
-          </Button>
-        </div>
+        <div className="h-screen relative">
+          <div className="fixed top-0 w-full">
+            <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
+          </div>
+          <div className="flex justify-center w-full h-full items-center">
+            <Button
+              handleOnClick={handleSubmit}
+              disabled={disabled}
+              styles=" px-24 text-xl"
+            >
+              Check In
+            </Button>
+          </div>
         </div>
       ) : session?.data?.type === "admin" ? (
         router.push("/dashboard")
       ) : (
-        <Loader />
+        <div className="h-screen flex justify-center items-center">
+          <Loader />
+        </div>
       )}
     </div>
   );

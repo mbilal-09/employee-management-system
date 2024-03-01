@@ -7,7 +7,6 @@ import Navbar from "@/components/layout/Navbar";
 import EmployeeModal from "@/components/ui/EmployeeModal";
 import Dropdown from "@/components/ui/Dropdown";
 import UserList from "@/components/ui/UserList";
-import AuthWrapper from "@/components/layout/AuthWrapper";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Loader from "@/components/ui/Loader";
@@ -73,21 +72,27 @@ const Employee = () => {
   }, [isModalOpen]);
 
   return (
-    <>
-    {session?.data?.type === "admin" ? (
-      <div>
-        <Navbar handleOnClick={handleAdd} content={"Add Employee"} />
-        <EmployeeModal isOpen={isModalOpen} closeModal={closeModal} />
-        <Dropdown onChange={handleDropdownChange} />
-        <br />
-        {isLoading ? (
+    <div className="h-screen">
+      {session?.data?.type === "admin" ? (
+        <div>
+          <Navbar handleOnClick={handleAdd} content={"Add Employee"} />
+          <EmployeeModal isOpen={isModalOpen} closeModal={closeModal} />
+          <Dropdown onChange={handleDropdownChange} />
+          <br />
+          {isLoading ? (
+            <div className="flex justify-center items-center">
+              <Loader />
+            </div>
+          ) : (
+            <UserList users={users} onDelete={handleDeleteUser} />
+          )}
+        </div>
+      ) : (
+        <div className="h-screen flex justify-center items-center">
           <Loader />
-        ) : (
-          <UserList users={users} onDelete={handleDeleteUser} />
-        )}
-      </div>
-    ) : <Loader />}
-    </>
+        </div>
+      )}
+    </div>
   );
 };
 
