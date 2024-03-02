@@ -24,6 +24,8 @@ const handler = NextAuth({
         try {
           const { email, password } = credentials;
 
+connectToDB();
+
           // Find user by email
           const user = await User.findOne({ email });
 
@@ -56,6 +58,9 @@ const handler = NextAuth({
     },
     async session({ session, user }) {
       try {
+
+connectToDB();
+
         // Find user by email
         const sessionUser = await User.findOne({ email: user?.email });
 
