@@ -24,8 +24,6 @@ const handler = NextAuth({
         try {
           const { email, password } = credentials;
 
-console.log("email-> ",email, "password-> ", password ) 
-
           // Find user by email
           const user = await User.findOne({ email });
 
@@ -58,14 +56,16 @@ console.log("email-> ",email, "password-> ", password )
     },
     async session({ session, user }) {
       try {
-console.log("user->", user)
         // Find user by email
         const sessionUser = await User.findOne({ email: user?.email });
 
         if (sessionUser) {
           // Omit password from session data
-       sessionUser?.password = undefined;
-        session?.data = sessionUser
+          if (sessionUser.password) {
+            delete sessionUser.password;
+          }
+console.log("sessionUser-> ", sessionUser)
+          session.data = sessionUser;
         }
 
         return session;
