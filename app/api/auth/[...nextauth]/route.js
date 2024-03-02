@@ -60,7 +60,7 @@ connectToDB();
       try {
 
 connectToDB();
-
+console.log("user --> ", user)
         // Find user by email
         const sessionUser = await User.findOne({ email: user?.email });
 
