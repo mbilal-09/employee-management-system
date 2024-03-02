@@ -64,8 +64,8 @@ console.log("user->", user)
 
         if (sessionUser) {
           // Omit password from session data
-          sessionUser?.password = null;
-          session?.data = sessionUser;
+       sessionUser?.password = undefined;
+        session?.data = sessionUser
         }
 
         return session;
