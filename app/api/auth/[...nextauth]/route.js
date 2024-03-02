@@ -60,7 +60,7 @@ connectToDB();
       try {
 
 connectToDB();
-console.log("user --> ", user, session)
+
         // Find user by email
         const sessionUser = await User.findOne({ email: session?.user?.email });
 
@@ -69,7 +69,7 @@ console.log("user --> ", user, session)
           if (sessionUser.password) {
             delete sessionUser.password;
           }
-console.log("sessionUser-> ", sessionUser)
+
           session.data = sessionUser;
         }
 
