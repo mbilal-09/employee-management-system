@@ -19,9 +19,9 @@ export const POST = async (req, { params }) => {
         const currentDateStr = `${currentDay}/${currentMonth}`;
 
         // Get current time
-        const currentTimeStr = currentDate.toLocaleTimeString();
+        const currentTimeStr = await fetch("http://worldtimeapi.org/api/timezone/Asia/Karachi")
 
-        console.log("currentTimeStr--> ", currentTimeStr)
+        const currTime = await currentTimeStr.json();
 
         // Get current month name
         const currentMonthName = currentDate.toLocaleString('default', { month: 'long' });
@@ -31,7 +31,7 @@ export const POST = async (req, { params }) => {
             userId: params.id,
             month: currentMonthName,
             date: currentDateStr,
-            time: currentTimeStr,
+            time: currTime.datetime.slice(11, 19),
         });
 
         // Save the check-in record to the database
