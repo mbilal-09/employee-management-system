@@ -21,6 +21,8 @@ export const POST = async (req, { params }) => {
         // Get current time
         const currentTimeStr = currentDate.toLocaleTimeString();
 
+        console.log("currentTimeStr--> ", currentTimeStr)
+
         // Get current month name
         const currentMonthName = currentDate.toLocaleString('default', { month: 'long' });
 
