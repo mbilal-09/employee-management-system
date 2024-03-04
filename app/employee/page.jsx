@@ -72,7 +72,7 @@ const Employee = () => {
   }, [isModalOpen]);
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen">
       {session?.data?.type === "admin" ? (
         <div>
           <Navbar handleOnClick={handleAdd} content={"Add Employee"} />
