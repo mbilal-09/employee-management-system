@@ -167,7 +167,7 @@ const Dashboard = () => {
   };     
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen">
       {session?.data?.type === "admin" ? (
         <div>
           <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
