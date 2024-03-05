@@ -31,9 +31,9 @@ const UserList = ({ users, onDelete }) => {
     };
   
     return (
-        <table className="p-4 mt-4 w-full">
+        <table className="p-4 mt-4 w-full text-sm">
         <thead>
-          <tr className="text-white text-left border-b border-white">
+          <tr className="text-neutral-400 text-left border-b border-neutral-500">
             <th className="py-2 px-4">Name</th>
             <th className="py-2 px-4">Email</th>
             <th className="py-2 px-4">Shift</th>
@@ -43,11 +43,11 @@ const UserList = ({ users, onDelete }) => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user._id} className="text-white border-b border-white">
+            <tr key={user._id} className="text-white border-b border-neutral-500">
               <td className="py-2 px-4 capitalize">{user.name}</td>
               <td className="py-2 px-4">{user.email}</td>
-              <td className="py-2 px-4">{user.shift}</td>
-              <td className="py-2 px-4">{user.type}</td>
+              <td className="py-2 px-4 capitalize">{user.shift}</td>
+              <td className="py-2 px-4 capitalize">{user.type}</td>
               <td className="py-2 px-4">
                 <Button handleOnClick={() => handleDelete(user._id)}>Delete</Button>
               </td>

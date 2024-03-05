@@ -30,18 +30,18 @@ const Dropdown = ({ onChange }) => {
     <select
       value={selectedValue}
       onChange={handleChange}
-      className="bg-transparent text-white ms-2 border-2 p-2 rounded-lg"
+      className="bg-transparent text-neutral-300 ms-2 border-2 border-neutral-300 p-2 rounded-lg "
     >
-      <option value="" className="text-black">
+      <option value="" className="text-neutral-300 bg-black/90">
         Select Shift
       </option>
-      <option value="morning" className="text-black">
+      <option value="morning" className="text-neutral-300 bg-black/90">
         Morning
       </option>
-      <option value="evening" className="text-black">
+      <option value="evening" className="text-neutral-300 bg-black/90">
         Evening
       </option>
-      <option value="night" className="text-black">
+      <option value="night" className="text-neutral-300 bg-black/90">
         Night
       </option>
     </select>

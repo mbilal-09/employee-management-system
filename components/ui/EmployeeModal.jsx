@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import Button from "./Button";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const EmployeeModal = ({ isOpen, closeModal }) => {
   const [formData, setFormData] = useState({
@@ -15,10 +15,10 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
     // Reset form data when modal is opened
     if (isOpen) {
       setFormData({
-        name: '',
-        email: '',
-        password: '',
-        shift: 'morning', // Reset to default shift
+        name: "",
+        email: "",
+        password: "",
+        shift: "morning", // Reset to default shift
       });
     }
   }, [isOpen]);
@@ -36,11 +36,11 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
     // Check if any field is empty
     if (!formData.name || !formData.email || !formData.password) {
       Swal.fire({
-        title: 'Warning!',
-        text: 'Please fill al the fields first',
-        icon: 'warning',
-        confirmButtonText: 'Ok'
-      })
+        title: "Warning!",
+        text: "Please fill al the fields first",
+        icon: "warning",
+        confirmButtonText: "Ok",
+      });
       return;
     }
     try {
@@ -53,11 +53,11 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
       });
       if (response.ok) {
         Swal.fire({
-          title: 'Success!',
-          text: 'Employee added successfully!',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        })
+          title: "Success!",
+          text: "Employee added successfully!",
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
         closeModal();
       } else {
         const data = await response.json();
@@ -74,22 +74,24 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
       isOpen={isOpen}
       onRequestClose={closeModal}
       contentLabel="Add Employee"
-      className="modal bg-gradient-to-t from-[--primary] to-[--secondary] border-2 text-white border-white rounded-lg p-4 m-4 w-1/2 mx-auto fixed top-10 left-1/4"
+      className="modal bg-neutral-800 text-white rounded-lg p-4 m-4 w-1/2 mx-auto fixed top-10 left-1/4"
       overlayClassName="overlay"
     >
-      <h2 className="ps-4 font-semibold">Add Employee</h2>
+      <h2 className="ps-4 font-semibold text-neutral-400">Add Employee</h2>
       <form className="p-4" onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="name" className="block mb-1">
+          <label htmlFor="name" className="block mb-1 ">
             Name:
           </label>
           <input
             type="text"
             id="name"
             name="name"
+            required
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-2 border border-black rounded text-black"
+            className="w-full p-2 border-b text-white bg-transparent outline-none"
+            placeholder="Employee Name"
           />
         </div>
         <div className="mb-4">
@@ -100,9 +102,11 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
             type="email"
             id="email"
             name="email"
+            required
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-2 border rounded border-black text-black"
+            className="w-full p-2 border-b text-white bg-transparent outline-none"
+            placeholder="example@gmail.com"
           />
         </div>
         <div className="mb-4">
@@ -113,9 +117,11 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
             type="password"
             id="password"
             name="password"
+            required
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-2 border rounded border-black text-black"
+            className="w-full p-2 border-b text-white bg-transparent outline-none"
+            placeholder="●●●●●●●●"
           />
         </div>
         <div className="mb-4">
@@ -131,9 +137,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="morning">
-                Morning
-              </label>
+              <label htmlFor="morning">Morning</label>
             </div>
             <div className="mr-4">
               <input
@@ -145,9 +149,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="evening">
-                Evening
-              </label>
+              <label htmlFor="evening">Evening</label>
             </div>
             <div>
               <input
@@ -159,9 +161,7 @@ const EmployeeModal = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor="night">
-                Night
-              </label>
+              <label htmlFor="night">Night</label>
             </div>
           </div>
         </div>
