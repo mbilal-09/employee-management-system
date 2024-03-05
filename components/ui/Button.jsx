@@ -6,7 +6,7 @@ const Button = ({ children, handleOnClick, disabled = false, styles = "" }) => {
       <button
         disabled={disabled}
         onClick={() => handleOnClick()}
-        className={`bg-white from-[--primary] to-[--secondary] text-[--primary] border-2 border-white py-2 px-4 rounded-lg font-semibold hover:text-white hover:bg-transparent transition-all delay-75 duration-700 ${styles}`}
+        className={`bg-neutral-100 text-gray-800 border- border-white py-2 px-4 rounded-lg font-semibold hover:text-white hover:bg-transparent transition-all duration-400 ${styles}`}
       >
         {children}
       </button>

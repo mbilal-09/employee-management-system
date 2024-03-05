@@ -171,7 +171,7 @@ const Dashboard = () => {
       {session?.data?.type === "admin" ? (
         <div>
           <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
-          <div className="p-3 flex justify-between">
+          <div className="pt-10 flex justify-between">
             <div className="flex gap-4 mb-4 items-center text-white">
               <div>
                 <label htmlFor="shift" className="font-semibold">
@@ -212,15 +212,15 @@ const Dashboard = () => {
             </div>
           </div>
           {result && (
-            <div className="overflow-x-auto text-white p-2">
-              <table className="border-collapse border border-gray-100 p-2 overflow-x-scroll">
+            <div className="overflow-x-auto text-white border border-neutral-500 rounded-lg mt-8 employee_table pb-[4px]">
+              <table className="border-collapse p-2 overflow-x-scroll">
                 <thead>
-                  <tr>
-                    <th className="border border-gray-100 p-2 px-10">Users</th>
+                  <tr className="text-neutral-400">
+                    <th className="p-2 px-32 ps-2 py-[10px] text-left">Users</th>
                     {dates.map((date) => (
                       <th
                         key={date}
-                        className="border border-gray-100 p-2 px-10"
+                        className="p-2 px-32 ps-2 py-[10px]"
                       >
                         {date}
                       </th>
@@ -239,14 +239,14 @@ const Dashboard = () => {
                       return acc;
                     }, {})
                   ).map((userData) => (
-                    <tr key={userData.user}>
-                      <td className="border border-gray-100 ps-2 capitalize">
+                    <tr key={userData.user} className="border-t border-neutral-500 text-sm hover:bg-black/30 cursor-pointer">
+                      <td className="ps-2 capitalize">
                         {userData.user}
                       </td>
                       {dates.map((date) => (
                         <td
                           key={`${userData.user}-${date}`}
-                          className="border border-gray-100 p-2 text-center"
+                          className="p-2 py-[10px] text-left"
                         >
                           {userData.checkIns[date]
                             ? userData.checkIns[date]
@@ -254,7 +254,7 @@ const Dashboard = () => {
                             ? "Holiday"
                             : isDateBeforeToday(date) === "Absent"
                             ? "Absent"
-                            : "-"}
+                            : "---"}
                         </td>
                       ))}
                     </tr>
