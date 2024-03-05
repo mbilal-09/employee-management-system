@@ -88,14 +88,14 @@ const CheckIn = () => {
     <div className="h-screen">
       {session?.data?.type === "employee" ? (
         <div className="h-screen relative">
-          <div className="fixed top-0 w-full">
+          <div className="fixed top-0 w-[90%]">
             <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
           </div>
           <div className="flex justify-center w-full h-full items-center">
             <Button
               handleOnClick={handleSubmit}
               disabled={disabled}
-              styles=" px-24 text-xl"
+              styles="text-xl"
             >
               Check In
             </Button>
