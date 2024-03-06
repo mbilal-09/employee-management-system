@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 
-const checkIn = () => {
+const CheckIn = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [disabled, setDisabled] = useState(false);
@@ -112,4 +112,4 @@ const checkIn = () => {
   );
 };
 
-export default checkIn;
+export default CheckIn;

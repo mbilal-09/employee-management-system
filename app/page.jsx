@@ -19,9 +19,15 @@ export default function Home() {
     return null;
   }
 
+  const handleSingIn = () => {
+    signIn();
+  };
+
   return (
     <div className="flex justify-center items-center h-screen">
-      <Button handleOnClick={signIn} styles="px-20 py-3 text-xl">Sign In</Button>
+      <Button handleOnClick={handleSingIn} styles="px-20 py-3 text-xl">
+        Sign In
+      </Button>
     </div>
   );
 }

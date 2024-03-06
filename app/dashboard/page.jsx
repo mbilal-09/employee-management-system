@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import Navbar from "@/components/layout/Navbar";
 import Button from "@/components/ui/Button";
@@ -6,7 +6,8 @@ import Loader from "@/components/ui/Loader";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -35,16 +36,16 @@ const Dashboard = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Sign Out!"
+      confirmButtonText: "Yes, Sign Out!",
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Sign Out!",
-          icon: "success"
+          icon: "success",
         });
         signOut();
       }
-    }); 
+    });
   };
 
   const handleMonthChange = (e) => {
@@ -104,12 +105,66 @@ const Dashboard = () => {
   const isDateBeforeToday = (dateString) => {
     const today = new Date();
     const [day, month] = dateString.split("/").map(Number);
-    const currentMonth = today.getMonth() + 1; // JavaScript months are zero-based
+    const currentMonth = today.getMonth() + 1;
+    const currentYear = today.getFullYear(); // Get the current year for consistency
+    const currentDate = new Date(currentYear, month - 1, day); // month - 1 because months are zero-indexed in JavaScript
     const currentDay = today.getDate();
-    
-    // If the month is less than the current month, or if it's the current month but the day is less than the current day
-    return month < currentMonth || (month === currentMonth && day < currentDay);
+
+    // Check if the date is a Sunday
+    if (currentDate.getDay() === 0) {
+      console.log("It's a Sunday!");
+      return "Holiday";
+    }
+
+    // Check if the date is before today
+    if ( month < currentMonth || (month === currentMonth && day < currentDay)) {
+      return "Absent";
+    }
+
+    // If the date is today or in the future
+    return "-";
   };
+
+  const exportToExcel = () => {
+    // Create an object to store the transformed data
+    const excelData = {};
+  
+    // Iterate over the result data to populate the excelData object
+    result?.forEach((entry) => {
+      const userId = entry.userId.name;
+      const date = entry.date;
+      const time = entry.time;
+  
+      if (!excelData[userId]) {
+        excelData[userId] = {};
+      }
+  
+      // Store the time for the corresponding date and user
+      excelData[userId][date] = time || isDateBeforeToday(date);
+    });
+  
+    // Create an array of users with their corresponding check-in times for each date
+    const excelArray = Object.keys(excelData)?.map((userId) => {
+      const userData = {
+        Users: userId,
+        ...dates?.reduce((acc, date) => {
+          acc[date] = excelData[userId][date] === undefined ? "-" : excelData[userId][date];
+          return acc;
+        }, {}),
+      };
+      return userData;
+    });
+  
+    // Create worksheet
+    const ws = XLSX.utils.json_to_sheet(excelArray);
+  
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  
+    // Save file
+    XLSX.writeFile(wb, "result.xlsx");
+  };     
 
   return (
     <div className="h-screen">
@@ -147,6 +202,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <Button handleOnClick={handleShowResult}>Show Result</Button>
+              </div>
+              <div>
+                <Button handleOnClick={exportToExcel}>Export to Excel</Button>
               </div>
             </div>
             <div>
@@ -190,7 +248,13 @@ const Dashboard = () => {
                           key={`${userData.user}-${date}`}
                           className="border border-gray-100 p-2 text-center"
                         >
-                          {userData.checkIns[date] ? userData.checkIns[date] : isDateBeforeToday(date) ? "Absent" : "-"}
+                          {userData.checkIns[date]
+                            ? userData.checkIns[date]
+                            : isDateBeforeToday(date) === "Holiday"
+                            ? "Holiday"
+                            : isDateBeforeToday(date) === "Absent"
+                            ? "Absent"
+                            : "-"}
                         </td>
                       ))}
                     </tr>
@@ -202,7 +266,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-screen">
-        <Loader />
+          <Loader />
         </div>
       )}
     </div>

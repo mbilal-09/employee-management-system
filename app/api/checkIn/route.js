@@ -17,7 +17,7 @@ export const GET = async (req, res) => {
     // Use .find() to filter check-ins based on shift and month
     let checkIns = await CheckIn.find({ month }).populate('userId');
 
-    if (checkIns.length > 0) {
+    if (checkIns?.length > 0) {
       checkIns.forEach((checkIn) => {
           if (checkIn.userId) {
               // Remove the password field from the user object
@@ -26,7 +26,7 @@ export const GET = async (req, res) => {
       });
   }
 
-  checkIns = checkIns.filter((e) => e.userId.shift === shift)
+  checkIns = checkIns?.filter((e) => e.userId?.shift === shift)
 
     // Return the filtered check-ins
     return new Response(JSON.stringify(checkIns), { status: 200, headers: { 'Content-Type': 'application/json' } });
