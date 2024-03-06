@@ -6,6 +6,9 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
+// Connect to the database
+connectToDB();
+
 const handler = NextAuth({
   // Configure one or more authentication providers
   providers: [
@@ -18,47 +21,55 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        // Add logic to validate credentials, usually by querying your database
+        try {
+          const { email, password } = credentials;
 
-        const { email, password } = credentials;
+          // Find user by email
+          const user = await User.findOne({ email });
 
-        await connectToDB();
-
-        const user = await User.findOne({ email });
-
-        if (user) {
-          // If credentials are valid, return the user object
-
-          const validPassword = await bcrypt.compare(password, user?.password);
-
-          if (validPassword) {
-            return { email: email };
+          if (!user) {
+            throw new Error("User not found");
           }
 
-          return false;
-        } else {
-          return false;
+          // Validate password
+          const validPassword = await bcrypt.compare(password, user.password);
+
+          if (!validPassword) {
+            throw new Error("Invalid password");
+          }
+
+          // Return user object if credentials are valid
+          return user;
+        } catch (error) {
+          // Handle errors
+          console.error("Authentication error:", error.message);
+          return null;
         }
       },
     }),
   ],
   // Add session handling callback functions
   callbacks: {
-
     async signIn(user, account, profile) {
       // Custom sign-in logic if needed
       return true;
     },
-    async session({ session }) {
-      connectToDB();
+    async session({ session, user }) {
+      try {
+        // Find user by email
+        const sessionUser = await User.findOne({ email: user.email });
 
-      const sessionUser = await User.findOne({
-        email: session?.user?.email,
-      });
-      sessionUser.password = null;
-      session.data = sessionUser;
+        if (sessionUser) {
+          // Omit password from session data
+          sessionUser.password = null;
+          session.data = sessionUser;
+        }
 
-      return session;
+        return session;
+      } catch (error) {
+        console.error("Session error:", error.message);
+        return session;
+      }
     },
   },
 });

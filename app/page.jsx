@@ -8,7 +8,6 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  console.log(session);
 
   if (session?.data?._id) {
     if (session.data?.type === "admin") {
