@@ -7,7 +7,7 @@ import SweetAlert from "@/components/ui/SweetAlert";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const CheckIn = () => {
   const { data: session, status } = useSession();
@@ -45,19 +45,18 @@ const CheckIn = () => {
         localStorage.setItem("lastCheckInDate", new Date().toISOString());
 
         Swal.fire({
-          title: 'Success!',
-          text: 'Check In Added',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        })
-        
+          title: "Success!",
+          text: "Check In Added",
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
       } else {
         Swal.fire({
-          title: 'Warning!',
-          text: 'Already Checked In Today',
-          icon: 'warning',
-          confirmButtonText: 'Ok'
-        })
+          title: "Warning!",
+          text: "Already Checked In Today",
+          icon: "warning",
+          confirmButtonText: "Ok",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
@@ -72,16 +71,16 @@ const CheckIn = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Sign Out!"
+      confirmButtonText: "Yes, Sign Out!",
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Sign Out!",
-          icon: "success"
+          icon: "success",
         });
         signOut();
       }
-    }); 
+    });
   };
 
   return (
@@ -91,14 +90,24 @@ const CheckIn = () => {
           <div className="fixed top-0 w-[90%]">
             <Navbar handleOnClick={handleSignOut} content={"Sign Out"} />
           </div>
-          <div className="flex justify-center w-full h-full items-center">
-            <Button
-              handleOnClick={handleSubmit}
-              disabled={disabled}
-              styles="text-xl"
-            >
-              Check In
-            </Button>
+          <div className="flex flex-col justify-center w-full h-full gap-8 items-center">
+            <div className="text-white text-center">
+              <span className="text-4xl font-semibold">
+                Welcome, {session && session?.data?.name}
+              </span>
+              <p className="mt-2">
+                To proceed with the check-in, please click the button below.
+              </p>
+            </div>
+            <div className="flex justify-center w-full items-center">
+              <Button
+                handleOnClick={handleSubmit}
+                disabled={disabled}
+                styles="text-xl"
+              >
+                Check In
+              </Button>
+            </div>
           </div>
         </div>
       ) : session?.data?.type === "admin" ? (
