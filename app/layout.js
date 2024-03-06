@@ -1,7 +1,7 @@
 "use client"
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Provider from "@/utils/Provider";
+import Provider from "@/utils/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
