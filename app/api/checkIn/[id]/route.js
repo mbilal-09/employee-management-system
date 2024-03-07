@@ -25,7 +25,7 @@ export const POST = async (req, { params }) => {
 
         let dayNight = Number(currTime.datetime.slice(11, 13))
 
-        if (dayNight > 12) {
+        if (dayNight >= 12) {
             dayNight = "PM"
         } else {
             dayNight ="AM"
