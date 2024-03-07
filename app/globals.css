@@ -96,9 +96,9 @@
   animation-delay: 0.3s;
 }
 
-.employees_table {
-  overflow-x: scroll !important;
-}
+/* .employee_table {
+  overflow: auto !important;
+} */
 
 .employee_table::-webkit-scrollbar {
   background-color: transparent;

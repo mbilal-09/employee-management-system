@@ -75,16 +75,23 @@ const Employee = () => {
     <div className="min-h-screen">
       {session?.data?.type === "admin" ? (
         <div>
-          <Navbar handleOnClick={handleAdd} content={"Add Employee"} />
+          <Navbar
+            handleOnClick={() => router.push("/dashboard")}
+            content={"Dashboard"}
+          />
           <EmployeeModal isOpen={isModalOpen} closeModal={closeModal} />
-          <Dropdown onChange={handleDropdownChange} />
-          <br />
+          <div className="flex justify-between items-center mb-10">
+            <Dropdown onChange={handleDropdownChange} />
+            <Button handleOnClick={handleAdd}>Add Employee</Button>
+          </div>
           {isLoading ? (
             <div className="flex justify-center items-center">
               <Loader />
             </div>
           ) : (
-            <UserList users={users} onDelete={handleDeleteUser} />
+            <div className="border border-neutral-500 rounded-lg h-[26.6rem] overflow-y-auto employee_table">
+              <UserList users={users} onDelete={handleDeleteUser} />
+            </div>
           )}
         </div>
       ) : (
